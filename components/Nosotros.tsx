@@ -92,10 +92,10 @@ function SpringCounter({
   }, [springValue, target, onComplete]);
 
   return (
-    <h2 className="spacegrotesk flex items-start gap-2 text-[clamp(7rem,18vw,18.75rem)] leading-none tabular-nums">
+    <h2 className="spacegrotesk-bold flex items-start gap-2 text-[clamp(7rem,18vw,18.75rem)] leading-none tabular-nums">
       {display}
 
-      <span className="spacegrotesk py-2 text-[clamp(5.5rem,10vw,12.5rem)] leading-none text-violet">
+      <span className="spacegrotesk-bold py-2 text-[clamp(5.5rem,10vw,12.5rem)] leading-none text-violet">
         {suffix}
       </span>
     </h2>
