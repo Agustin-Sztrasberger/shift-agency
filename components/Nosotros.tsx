@@ -216,6 +216,112 @@ export function Nosotros() {
   const [isCounterAnimating, setIsCounterAnimating] =
     useState(false);
 
+  /*
+   * MOBILE: un KPI por deslizamiento (tipo historias).
+   * Todo se mide en píxeles reales en cada momento (la altura de pantalla del celular
+   * cambia con la barra del navegador), y cada paso lleva al CENTRO de su tramo de scroll,
+   * así el KPI que se ve siempre coincide con el paso.
+   */
+  useEffect(() => {
+    if (!window.matchMedia("(pointer: coarse)").matches) return;
+    const pin = pinRef.current;
+    if (!pin) return;
+
+    const N = stats.length;
+    const top = () => pin.getBoundingClientRect().top + window.scrollY;
+    const range = () => Math.max(pin.offsetHeight - window.innerHeight, 1);
+    const center = (i: number) => top() + ((i + 0.5) / N) * range();
+    const indexAt = (y: number) => Math.min(N - 1, Math.max(0, Math.floor(((y - top()) / range()) * N)));
+    const inside = (y: number) => y >= top() - 1 && y <= top() + range() + 1;
+
+    let startY = 0;
+    let touching = false;
+    let dragged = false;
+    let lastDragEnd = Number.NEGATIVE_INFINITY;
+    let mode: "step" | "native" | "hold" | null = null;
+    let animatingUntil = 0;
+    let lastStep = 0;
+    let wasInside = inside(window.scrollY);
+    // Retención: tras frenar una entrada "lanzada", anulamos la inercia que siga empujando
+    let holdTarget = 0;
+    let holdUntil = 0;
+    let prevY = window.scrollY;
+
+    const goTo = (i: number, instant = false) => {
+      const now = performance.now();
+      animatingUntil = now + (instant ? 120 : 750);
+      lastStep = now;
+      window.scrollTo({ top: center(i), behavior: instant ? "instant" : "smooth" });
+    };
+
+    const onTouchStart = (e: TouchEvent) => {
+      touching = true;
+      dragged = false;
+      mode = null;
+      startY = e.touches[0].clientY;
+    };
+
+    const onTouchMove = (e: TouchEvent) => {
+      const dy = startY - e.touches[0].clientY; // > 0: hacia abajo
+      if (Math.abs(dy) > 8) dragged = true;
+      if (!inside(window.scrollY)) return; // fuera de los KPIs: scroll normal
+
+      if (mode === "hold" || performance.now() < animatingUntil) {
+        if (e.cancelable) e.preventDefault();
+        return;
+      }
+      if (mode === null && Math.abs(dy) > 8) {
+        const i = indexAt(window.scrollY);
+        // En el primer KPI hacia arriba o en el último hacia abajo: dejamos salir normal
+        mode = (i === N - 1 && dy > 0) || (i === 0 && dy < 0) ? "native" : "step";
+      }
+      if (mode === "step" && e.cancelable) e.preventDefault();
+    };
+
+    const onTouchEnd = (e: TouchEvent) => {
+      touching = false;
+      if (dragged) lastDragEnd = performance.now();
+      if (mode !== "step") return;
+      const dy = startY - e.changedTouches[0].clientY;
+      if (Math.abs(dy) < 30 || performance.now() - lastStep < 500) return;
+      const target = Math.min(N - 1, Math.max(0, indexAt(window.scrollY) + (dy > 0 ? 1 : -1)));
+      goTo(target);
+    };
+
+    // Si el dedo "lanza" el scroll y entra a la sección, frenamos en el primer (o último) KPI.
+    // Solo para scroll hecho con el dedo: los links del menú pasan de largo sin problema.
+    const onScroll = () => {
+      const y = window.scrollY;
+      const now = performance.now();
+      const isIn = inside(y);
+      const byFinger = touching || now - lastDragEnd < 1500;
+      if (isIn && !wasInside && byFinger && now >= animatingUntil) {
+        const target = y > prevY ? 0 : N - 1;
+        goTo(target, true);
+        holdTarget = center(target);
+        holdUntil = now + 900;
+        // Si el dedo sigue apoyado, ese mismo gesto ya no avanza: solo frena acá
+        if (touching) mode = "hold";
+      } else if (now < holdUntil && Math.abs(y - holdTarget) > 2) {
+        // La inercia del dedo sigue empujando: lo dejamos clavado en el KPI
+        window.scrollTo({ top: holdTarget, behavior: "instant" });
+      }
+      wasInside = isIn;
+      prevY = y;
+    };
+
+    window.addEventListener("touchstart", onTouchStart, { passive: true });
+    window.addEventListener("touchmove", onTouchMove, { passive: false });
+    window.addEventListener("touchend", onTouchEnd, { passive: true });
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      window.removeEventListener("touchstart", onTouchStart);
+      window.removeEventListener("touchmove", onTouchMove);
+      window.removeEventListener("touchend", onTouchEnd);
+      window.removeEventListener("scroll", onScroll);
+    };
+  }, []);
+
   const { scrollYProgress } = useScroll({
     target: pinRef,
     offset: ["start start", "end end"],
