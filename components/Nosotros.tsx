@@ -304,21 +304,47 @@ export function Nosotros() {
         if (touching) mode = "hold";
       } else if (now < holdUntil && Math.abs(y - holdTarget) > 2) {
         // La inercia del dedo sigue empujando: lo dejamos clavado en el KPI
+        // y extendemos la retención mientras siga empujando (flicks fuertes duran más)
         window.scrollTo({ top: holdTarget, behavior: "instant" });
+        holdUntil = Math.max(holdUntil, now + 300);
       }
       wasInside = isIn;
       prevY = y;
     };
 
+    /*
+     * El listener de touchmove NO pasivo hace que el navegador espere al JS en cada
+     * movimiento del dedo: si estuviera siempre activo, el scroll se trabaría en todo
+     * el sitio (por ejemplo al pasar el video). Por eso solo lo enganchamos cuando la
+     * sección de KPIs está cerca de la pantalla.
+     */
+    let moveAttached = false;
+    const syncMoveListener = () => {
+      const rect = pin.getBoundingClientRect();
+      const vh = window.innerHeight;
+      const near = rect.top < vh * 1.5 && rect.bottom > -vh * 0.5;
+      if (near && !moveAttached) {
+        window.addEventListener("touchmove", onTouchMove, { passive: false });
+        moveAttached = true;
+      } else if (!near && moveAttached) {
+        window.removeEventListener("touchmove", onTouchMove);
+        moveAttached = false;
+      }
+    };
+    const onScrollAll = () => {
+      syncMoveListener();
+      onScroll();
+    };
+
+    syncMoveListener();
     window.addEventListener("touchstart", onTouchStart, { passive: true });
-    window.addEventListener("touchmove", onTouchMove, { passive: false });
     window.addEventListener("touchend", onTouchEnd, { passive: true });
-    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("scroll", onScrollAll, { passive: true });
     return () => {
       window.removeEventListener("touchstart", onTouchStart);
       window.removeEventListener("touchmove", onTouchMove);
       window.removeEventListener("touchend", onTouchEnd);
-      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("scroll", onScrollAll);
     };
   }, []);
 

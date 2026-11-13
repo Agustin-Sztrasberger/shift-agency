@@ -221,7 +221,9 @@ export function Hero() {
 
       <div data-hero-media className="relative w-full overflow-hidden bg-surface-raised opacity-0">
         <video ref={videoRef} className="aspect-[4/3] h-full w-full object-cover" muted loop playsInline preload="none" aria-label="Video de Shift Agency">
-          <source src="/videos/Video-Shift%20Agency.mp4" type="video/mp4" />
+          {/* Celular: 720p liviano (~3 MB). Desktop: 1080p (~7 MB). Sin audio y con faststart. */}
+          <source src="/videos/shift-hero-720.mp4" type="video/mp4" media="(max-width: 767px)" />
+          <source src="/videos/shift-hero-1080.mp4" type="video/mp4" />
         </video>
       </div>
     </section>
