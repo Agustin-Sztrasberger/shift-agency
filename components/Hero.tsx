@@ -11,99 +11,149 @@ gsap.registerPlugin(useGSAP);
 // Evento que avisa al resto del sitio (header, etc.) que el título terminó de escribirse.
 export const HERO_TYPED_EVENT = "shift:hero-typed";
 
-const CHAR_DELAY = 55; // ms por letra
-const LINE_PAUSE = 220; // pausa extra al terminar cada renglón
-const START_DELAY = 350;
+const START_DELAY = 250; // respiro después de que cargan las fuentes
+const LINE_PAUSE = 230; // pausa al terminar cada renglón
+const SPACE_PAUSE = 45; // mini pausa entre palabras
 
 function markTyped() {
   (window as unknown as { __shiftHeroTyped?: boolean }).__shiftHeroTyped = true;
   window.dispatchEvent(new CustomEvent(HERO_TYPED_EVENT));
 }
 
+/** Ritmo humano: variación leve y determinística (siempre se ve igual), con pausas en espacios y renglones. */
+function buildSchedule(lines: string[]) {
+  const times: number[] = [];
+  let t = START_DELAY;
+  let n = 0;
+  lines.forEach((line, lineIndex) => {
+    Array.from(line).forEach((char) => {
+      n += 1;
+      const jitter = (Math.sin(n * 12.9898) * 43758.5453) % 1; // -1..1 → ~33 a ~59 ms por letra
+      t += 46 + Math.abs(jitter) * 26 - 13;
+      if (char === " ") t += SPACE_PAUSE;
+      times.push(t);
+    });
+    if (lineIndex < lines.length - 1) t += LINE_PAUSE;
+  });
+  return times;
+}
+
 /**
  * Título con efecto máquina de escribir.
- * - La letra que se acaba de tipear es violeta; las anteriores pasan a crema.
- * - El último renglón ("un cambio real") queda violeta entero.
- * - Las letras sin tipear existen pero son transparentes, así el texto no se mueve.
- * - Al terminar, el cursor titila un par de veces y desaparece.
+ * - La letra recién tipeada aparece al instante en violeta; la anterior pasa a crema con un fundido corto.
+ * - El último renglón ("un cambio real") queda violeta.
+ * - Las letras ya ocupan su lugar (transparentes), así el texto no se mueve.
+ * - Se anima con requestAnimationFrame tocando el DOM directo: no se re-renderiza React en cada letra.
+ * - El cursor queda fijo mientras escribe; al terminar titila un par de veces y desaparece.
  */
 function TypewriterTitle({ lines, onDone }: { lines: string[]; onDone: () => void }) {
-  const total = lines.reduce((sum, line) => sum + line.length, 0);
-  const [typed, setTyped] = useState(0);
-  const [cursorGone, setCursorGone] = useState(false);
-  const doneRef = useRef(false);
-
-  // Si cambia el idioma después de terminar, mostramos el texto completo sin volver a tipear.
-  useEffect(() => {
-    if (doneRef.current) setTyped(total);
-  }, [total]);
+  const titleRef = useRef<HTMLHeadingElement>(null);
+  const caretRef = useRef<HTMLSpanElement>(null);
+  const [done, setDone] = useState(false);
+  const onDoneRef = useRef(onDone);
+  onDoneRef.current = onDone;
 
   useEffect(() => {
+    const title = titleRef.current;
+    const caret = caretRef.current;
+    if (!title || !caret) return;
+    const chars = Array.from(title.querySelectorAll<HTMLSpanElement>("[data-tw-char]"));
+
+    const finish = () => {
+      setDone(true);
+      onDoneRef.current();
+    };
+
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      doneRef.current = true;
-      setTyped(total);
-      setCursorGone(true);
-      onDone();
+      caret.style.opacity = "0";
+      finish();
       return;
     }
 
-    // Final de cada renglón (en cantidad de letras acumuladas) para hacer la pausa.
-    const lineEnds = lines.reduce<number[]>((acc, line) => [...acc, (acc[acc.length - 1] ?? 0) + line.length], []);
-    let count = 0;
-    let timer: number;
-
-    const step = () => {
-      count += 1;
-      setTyped(count);
-      if (count >= total) {
-        doneRef.current = true;
-        onDone();
-        timer = window.setTimeout(() => setCursorGone(true), 1400); // ~2 parpadeos y se va
-        return;
-      }
-      timer = window.setTimeout(step, CHAR_DELAY + (lineEnds.includes(count) ? LINE_PAUSE : 0));
+    const placeCaret = (index: number) => {
+      // index = cantidad de letras tipeadas; el cursor va a la derecha de la última (o antes de la primera)
+      const ref = chars[Math.max(index - 1, 0)];
+      if (!ref) return;
+      const box = title.getBoundingClientRect();
+      const r = ref.getBoundingClientRect();
+      const x = (index === 0 ? r.left : r.right) - box.left;
+      caret.style.height = `${r.height * 0.78}px`;
+      caret.style.transform = `translate3d(${x + r.height * 0.03}px, ${r.top - box.top + r.height * 0.13}px, 0)`;
     };
 
-    timer = window.setTimeout(step, START_DELAY);
-    return () => window.clearTimeout(timer);
-    // Solo al montar: el efecto corre una vez como entrada del sitio.
+    const schedule = buildSchedule(lines);
+    let raf = 0;
+    let typed = 0;
+    let startAt = 0;
+    let fadeTimer = 0;
+
+    const tick = (now: number) => {
+      if (!startAt) startAt = now;
+      const elapsed = now - startAt;
+      let changed = false;
+      // Revela todas las letras que ya "tocaba" escribir (si un frame se atrasa, no se pierde el ritmo)
+      while (typed < chars.length && elapsed >= schedule[typed]) {
+        chars[typed - 1]?.classList.remove("cur");
+        chars[typed].classList.add("on", "cur");
+        typed += 1;
+        changed = true;
+      }
+      if (changed) placeCaret(typed);
+
+      if (typed >= chars.length) {
+        caret.classList.add("animate-caret");
+        fadeTimer = window.setTimeout(() => {
+          caret.classList.remove("animate-caret"); // si no, el parpadeo pisa el fundido
+          caret.style.opacity = "0";
+        }, 1300);
+        finish();
+        return;
+      }
+      raf = requestAnimationFrame(tick);
+    };
+
+    let cancelled = false;
+    // Arrancamos cuando las fuentes ya cargaron: evita saltos y tirones en las primeras letras
+    (document.fonts?.ready ?? Promise.resolve()).then(() => {
+      if (cancelled) return;
+      placeCaret(0);
+      caret.style.opacity = "1";
+      raf = requestAnimationFrame(tick);
+    });
+
+    return () => {
+      cancelled = true;
+      cancelAnimationFrame(raf);
+      window.clearTimeout(fadeTimer);
+    };
+    // Solo al montar: es la entrada del sitio.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  let index = 0;
-  const cursor = (
-    <span className="relative inline-block w-0 align-baseline" aria-hidden>
-      <span
-        className={`absolute bottom-[-0.08em] left-[0.04em] h-[0.95em] w-[0.06em] rounded-full bg-violet transition-opacity duration-500 ${
-          cursorGone ? "opacity-0" : "animate-caret"
-        }`}
-      />
-    </span>
-  );
-
   return (
     <h1
+      ref={titleRef}
       aria-label={lines.join(" ")}
-      className="text-[clamp(2.9rem,8.4vw,7.5rem)] font-medium leading-[1.02] tracking-[-0.01em]"
+      className="relative text-[clamp(2.9rem,8.4vw,7.5rem)] font-medium leading-[1.02] tracking-[-0.01em]"
     >
+      <span
+        ref={caretRef}
+        aria-hidden
+        className="tw-caret pointer-events-none absolute left-0 top-0 w-[0.055em] rounded-full bg-violet opacity-0"
+      />
       {lines.map((line, lineIndex) => {
         const isLast = lineIndex === lines.length - 1;
         return (
-          <span key={lineIndex} className="block" aria-hidden>
-            {Array.from(line).map((char, charIndex) => {
-              index += 1;
-              const position = index;
-              const isTyped = position <= typed;
-              const isCurrent = position === typed && typed < total;
-              const color = !isTyped ? "text-transparent" : isLast || isCurrent ? "text-violet" : "text-cream";
-              return (
-                <span key={charIndex} className={`${color} transition-colors duration-150`}>
-                  {typed === 0 && position === 1 && cursor}
-                  {char}
-                  {position === typed && cursor}
-                </span>
-              );
-            })}
+          <span key={`${lineIndex}-${line}`} className="block" aria-hidden>
+            {Array.from(line).map((char, charIndex) => (
+              <span
+                key={charIndex}
+                data-tw-char
+                className={`tw-char${isLast ? " tw-last" : ""}${done ? " on" : ""}`}
+              >
+                {char}
+              </span>
+            ))}
           </span>
         );
       })}
@@ -115,6 +165,15 @@ export function Hero() {
   const { content } = useLanguage();
   const container = useRef<HTMLElement>(null);
   const [typed, setTyped] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  // El video (pesado) empieza a cargar y reproducirse recién cuando termina el título
+  useEffect(() => {
+    if (!typed || !videoRef.current) return;
+    const video = videoRef.current;
+    video.preload = "auto";
+    video.play().catch(() => undefined);
+  }, [typed]);
 
   // Lo demás del hero aparece recién cuando termina de escribirse el título.
   useGSAP(() => {
@@ -161,7 +220,7 @@ export function Hero() {
       </div>
 
       <div data-hero-media className="relative w-full overflow-hidden bg-surface-raised opacity-0">
-        <video className="aspect-[4/3] h-full w-full object-cover" autoPlay muted loop playsInline aria-label="Video de Shift Agency">
+        <video ref={videoRef} className="aspect-[4/3] h-full w-full object-cover" muted loop playsInline preload="none" aria-label="Video de Shift Agency">
           <source src="/videos/Video-Shift%20Agency.mp4" type="video/mp4" />
         </video>
       </div>

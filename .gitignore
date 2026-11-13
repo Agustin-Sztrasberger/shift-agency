@@ -2,3 +2,5 @@ node_modules/
 .next/
 .env
 .env.local
+# caché de herramientas de diseño
+.impeccable/
