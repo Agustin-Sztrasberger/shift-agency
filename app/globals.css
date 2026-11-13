@@ -889,15 +889,3 @@
     color: #614cde;
   }
 }
-
-/* KPIs en mobile: el scroll frena en cada paso (ver Nosotros.tsx) */
-@media (hover: none) and (pointer: coarse) {
-  html {
-    /* proximity: solo actúa cerca de los anclajes de los KPIs, el resto del sitio scrollea normal */
-    scroll-snap-type: y proximity;
-  }
-  .kpi-snap {
-    scroll-snap-align: start;
-    scroll-snap-stop: always;
-  }
-}
