@@ -889,3 +889,25 @@
     color: #614cde;
   }
 }
+
+/* Grilla de imágenes (ShiftExperience) en mobile: 3 columnas en lugar de 5,
+   así cada celda mantiene casi la misma proporción que en desktop en vez de estirarse en vertical. */
+@media (max-width: 767px) {
+  .zoom-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    height: auto;
+    aspect-ratio: 1.05 / 1;
+  }
+  /* Ocultamos las celdas de los extremos de la fila de arriba y la de abajo */
+  .zoom-grid > .grid-cell:nth-child(1),
+  .zoom-grid > .grid-cell:nth-child(5),
+  .zoom-grid > .grid-cell:nth-child(9),
+  .zoom-grid > .grid-cell:nth-child(13) {
+    display: none;
+  }
+  /* En la fila del medio las laterales ocupan una sola columna */
+  .zoom-grid > .grid-cell.middle-left,
+  .zoom-grid > .grid-cell.middle-right {
+    grid-column: span 1;
+  }
+}
