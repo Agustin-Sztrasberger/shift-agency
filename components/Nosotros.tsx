@@ -194,6 +194,31 @@ export function Nosotros() {
   const { content } = useLanguage();
 
   const pinRef = useRef<HTMLDivElement>(null);
+
+  /*
+   * Anclajes de scroll SOLO mientras la sección de KPIs ocupa la pantalla
+   * (pantallas táctiles). Fuera de esta sección el sitio scrollea libre.
+   */
+  useEffect(() => {
+    const root = document.documentElement;
+    const update = () => {
+      const pin = pinRef.current;
+      if (!pin) return;
+      const rect = pin.getBoundingClientRect();
+      const vh = window.innerHeight;
+      // Se apaga apenas pasás el último KPI (10% de pantalla), así salir hacia abajo no te devuelve.
+      const inside = rect.top <= vh * 0.2 && rect.bottom >= vh * 0.9;
+      root.classList.toggle("kpi-snapping", inside);
+    };
+    update();
+    window.addEventListener("scroll", update, { passive: true });
+    window.addEventListener("resize", update);
+    return () => {
+      window.removeEventListener("scroll", update);
+      window.removeEventListener("resize", update);
+      root.classList.remove("kpi-snapping");
+    };
+  }, []);
   const introRef = useRef<HTMLDivElement>(null);
 
   useGSAP(() => {

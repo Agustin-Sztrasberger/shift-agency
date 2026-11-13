@@ -892,8 +892,9 @@
 
 /* KPIs en mobile: el scroll frena en cada paso (ver Nosotros.tsx) */
 @media (hover: none) and (pointer: coarse) {
-  html {
-    /* proximity: solo actúa cerca de los anclajes de los KPIs, el resto del sitio scrollea normal */
+  /* Se activa solo mientras la sección de KPIs ocupa la pantalla (clase que pone Nosotros.tsx) */
+  html.kpi-snapping {
+    /* proximity (no mandatory): frena en cada KPI sin trabar los links del menú ni la salida */
     scroll-snap-type: y proximity;
   }
   .kpi-snap {
