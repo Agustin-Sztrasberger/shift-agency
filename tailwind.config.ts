@@ -37,6 +37,13 @@ const config: Config = {
       },
       animation: {
         "spin-slow": "spin 12s linear infinite",
+        caret: "caret 0.7s step-end infinite",
+      },
+      keyframes: {
+        caret: {
+          "0%, 100%": { opacity: "1" },
+          "50%": { opacity: "0" },
+        },
       },
     },
   },

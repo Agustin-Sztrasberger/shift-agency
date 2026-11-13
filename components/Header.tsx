@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { useLanguage } from "@/lib/i18n";
+import { useHeroTyped } from "@/lib/useHeroTyped";
 import { SOCIAL } from "@/lib/social";
 import { FacebookIcon, InstagramIcon } from "@/components/SocialIcons";
 
@@ -56,6 +57,7 @@ function SocialLinks({ className = "" }: { className?: string }) {
 
 export function Header() {
   const { content } = useLanguage();
+  const ready = useHeroTyped();
   const [hidden, setHidden] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -90,7 +92,11 @@ export function Header() {
   ];
 
   return (
-    <header className="fixed top-0 z-50 w-full">
+    <header
+      className={`fixed top-0 z-50 w-full transition-[opacity,transform] duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+        ready ? "translate-y-0 opacity-100" : "pointer-events-none -translate-y-4 opacity-0"
+      }`}
+    >
       {/* Degradé para que el contenido no se mezcle con la nav al scrollear */}
       <div
         aria-hidden

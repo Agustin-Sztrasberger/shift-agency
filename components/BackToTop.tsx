@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useLanguage } from "@/lib/i18n";
+import { useHeroTyped } from "@/lib/useHeroTyped";
 import { CONTACT } from "@/lib/social";
 import { ShiftArrow } from "@/components/ShiftArrow";
 import { WhatsappIcon } from "@/components/SocialIcons";
@@ -11,6 +12,7 @@ import { WhatsappIcon } from "@/components/SocialIcons";
 export function BackToTop() {
   const { language, content } = useLanguage();
   const [visible, setVisible] = useState(false);
+  const ready = useHeroTyped();
 
   useEffect(() => {
     const onScroll = () => setVisible(window.scrollY > window.innerHeight * 0.9);
@@ -42,7 +44,7 @@ export function BackToTop() {
         target="_blank"
         rel="noopener noreferrer"
         aria-label={language === "es" ? "Escribinos por WhatsApp" : "Message us on WhatsApp"}
-        className="flex h-14 w-14 items-center justify-center rounded-full bg-[#25D366] text-white shadow-[0_12px_30px_rgb(37_211_102_/_0.35)] transition-transform duration-300 [transition-timing-function:cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5 hover:scale-105"
+        className={`flex h-14 w-14 items-center justify-center rounded-full bg-[#25D366] text-white shadow-[0_12px_30px_rgb(37_211_102_/_0.35)] transition-[transform,opacity] duration-500 [transition-timing-function:cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5 hover:scale-105 ${ready ? "opacity-100" : "pointer-events-none translate-y-4 opacity-0"}`}
       >
         <WhatsappIcon className="h-6 w-6" />
       </a>
