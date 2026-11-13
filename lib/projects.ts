@@ -1,11 +1,30 @@
 // Datos de los casos de estudio. Se usan en el modal de Trabajos y en /proyectos/[slug].
 export const projectDetails = {
-  "diseno-web": {
+  batter: {
     label: "Caso de estudio 01",
+    title: "Branding y sitio web",
+    client: "Batter",
+    category: "Software gastronómico",
+    thumbnail: "/images/proyectos/batter-card.webp",
+    cover: "/images/proyectos/batter-cover.webp",
+    intro:
+      "Una marca y un sitio para un software que pone pedidos, reservas y clientes de bares, cafés y restaurantes en un solo lugar.",
+    objective:
+      "Darle a Batter una identidad propia y un sitio que explique el producto con claridad y lleve a pedir una demo.",
+    services: ["Branding", "Identidad visual", "Diseño Web", "UX/UI"],
+    metrics: [
+      ["01", "Objetivo", "Una marca reconocible para un producto tecnológico pensado para la gastronomía."],
+      ["02", "Planificación", "Un sitio que recorre funciones, planes y preguntas hasta la consulta."],
+      ["03", "Resultado", "Una identidad consistente entre la marca, el sitio y el propio software."],
+    ],
+  },
+  "diseno-web": {
+    label: "Caso de estudio 02",
     title: "Diseño Web",
     client: "Embassy Zona Franca",
     category: "Logística",
     thumbnail: "/images/thumbnail.png",
+    cover: "/images/thumbnail.png",
     intro:
       "Una experiencia digital clara, expresiva y pensada para que cada visita se convierta en una oportunidad.",
     objective:
@@ -18,11 +37,12 @@ export const projectDetails = {
     ],
   },
   rebranding: {
-    label: "Caso de estudio 02",
+    label: "Caso de estudio 03",
     title: "Rebranding",
     client: "Bashem Realty",
     category: "Inmobiliaria",
     thumbnail: "/images/thumbnail.png",
+    cover: "/images/thumbnail.png",
     intro:
       "Una nueva forma de presentarse, con una identidad que comunica confianza desde el primer vistazo.",
     objective:
@@ -35,11 +55,12 @@ export const projectDetails = {
     ],
   },
   "creacion-de-contenido": {
-    label: "Caso de estudio 03",
+    label: "Caso de estudio 04",
     title: "Creación de contenido",
     client: "ABRE Desarrollos",
     category: "Desarrolladora",
     thumbnail: "/images/thumbnail.png",
+    cover: "/images/thumbnail.png",
     intro:
       "Contenido con intención: piezas que detienen el scroll y construyen una relación real con la audiencia.",
     objective:

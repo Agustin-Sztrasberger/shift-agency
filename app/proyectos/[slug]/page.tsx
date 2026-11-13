@@ -54,7 +54,7 @@ export default async function ProjectPage({
 
           <div data-page-media className="mt-16 overflow-hidden rounded-lg bg-surface-raised md:mt-24">
             <img
-              src={project.thumbnail}
+              src={project.cover}
               alt={`Vista previa de ${project.title}`}
               className="aspect-[16/8] h-full w-full object-cover"
             />
