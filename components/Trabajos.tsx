@@ -65,7 +65,7 @@ export function Trabajos() {
           </p>
         </div>
 
-        <div data-work-grid className="grid gap-8 md:grid-cols-3 mx-auto max-w-6xl">
+        <div data-work-grid className="mx-auto grid max-w-6xl gap-x-8 gap-y-14 md:grid-cols-2">
           {content.work.items.map((trabajo, index) => (
             <article data-work-card key={trabajo.title}>
               <button
@@ -76,13 +76,13 @@ export function Trabajos() {
                   if (project) setActiveProject(project);
                 }}
                 aria-label={`Ver proyecto ${trabajo.title} - ${trabajo.client}`}
-                className="group relative block aspect-[4/3] w-full overflow-hidden rounded-lg bg-surface-raised text-left"
+                className="group relative block aspect-[16/10] w-full overflow-hidden rounded-xl bg-surface-raised text-left"
               >
                 <img
                   src={trabajo.thumbnail}
                   alt=""
                   data-work-image
-                  className="h-full w-full scale-[1.06] rounded-lg object-cover transition-[filter] duration-500 group-hover:brightness-75"
+                  className="h-full w-full scale-[1.06] rounded-xl object-cover transition-[filter,transform] duration-700 group-hover:brightness-75"
                 />
 
                 <span
@@ -92,8 +92,21 @@ export function Trabajos() {
                   <ShiftArrow className="h-3.5 w-3.5" />
                 </span>
               </button>
-              <h3 className="mt-4 text-h3">{trabajo.title}</h3>
-              <p className="text-ink text-h5">{trabajo.client} | {trabajo.category}</p>
+              <h3 className="mt-5 text-[clamp(1.5rem,2.2vw,1.875rem)] leading-tight text-cream">{trabajo.client}</h3>
+              <ul className="mt-4 flex flex-wrap gap-2.5" aria-label={`${trabajo.category}: ${trabajo.tags.join(", ")}`}>
+                {[trabajo.category, ...trabajo.tags].map((tag, tagIndex) => (
+                  <li
+                    key={tag}
+                    className={`rounded-full border px-4 py-2 text-sm leading-none ${
+                      tagIndex === 0
+                        ? "spacegrotesk-medium border-cream/90 text-cream"
+                        : "spacegrotesk border-white/20 text-cream/50"
+                    }`}
+                  >
+                    {tag}
+                  </li>
+                ))}
+              </ul>
             </article>
           ))}
         </div>

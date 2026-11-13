@@ -160,7 +160,7 @@ export function Contacto() {
         </div>
 
         {!sent ? (
-          <form onSubmit={handleSubmit} className="mt-12 flex flex-col gap-9">
+          <form onSubmit={handleSubmit} className="mt-6 flex flex-col gap-9 rounded-[22px] bg-[#222222] px-6 py-10 md:px-12 md:py-12">
             <Field id="nombre" label={c.nameLabel} placeholder={c.namePlaceholder} required autoComplete="name" />
 
             <div className="grid gap-9 sm:grid-cols-2">
@@ -200,7 +200,7 @@ export function Contacto() {
             </div>
           </form>
         ) : (
-          <div role="status" className="sent-card mt-12 rounded-[28px] bg-[#222222] px-8 py-14 text-center md:px-10">
+          <div role="status" className="sent-card mt-6 rounded-[22px] bg-[#222222] px-8 py-14 text-center md:px-10">
             <div className="sent-ico mx-auto flex h-[72px] w-[72px] items-center justify-center rounded-full bg-violet text-cream">
               <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
                 <path d="M20 6 9 17l-5-5" />

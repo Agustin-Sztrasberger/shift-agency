@@ -3,7 +3,7 @@ export const projectDetails = {
   "diseno-web": {
     label: "Caso de estudio 01",
     title: "Diseño Web",
-    client: "Embassy Zona Francia",
+    client: "Embassy Zona Franca",
     category: "Logística",
     thumbnail: "/images/thumbnail.png",
     intro:
