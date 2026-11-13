@@ -317,6 +317,20 @@ export function Nosotros() {
           height: `${stats.length * 100}vh`,
         }}
       >
+        {/*
+         * Puntos de anclaje (solo pantallas táctiles, ver .kpi-snap en globals.css):
+         * uno por KPI, cada 100vh. Con scroll-snap-stop: always el dedo no puede
+         * "volar" por encima de un KPI: el scroll frena en cada paso.
+         */}
+        {stats.map((_, index) => (
+          <div
+            key={index}
+            aria-hidden
+            className="kpi-snap pointer-events-none absolute left-0 h-px w-full"
+            style={{ top: `${index * 100}vh` }}
+          />
+        ))}
+
         <div className="sticky top-0 h-screen overflow-hidden px-6 md:px-16 lg:px-8">
           <FloatingImage
             position={currentPositions.image1}
