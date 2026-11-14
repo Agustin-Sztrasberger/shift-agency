@@ -107,13 +107,12 @@ export default async function ProjectPage({
 
       <section data-page-section className="px-6 py-20 md:px-16 md:py-32 lg:px-8">
         <div className="mx-auto max-w-6xl">
-          <div className="grid gap-8 md:grid-cols-3">
+          <div className="grid gap-8 lg:grid-cols-3">
             {project.metrics.map(([number, heading, description]) => (
               <article key={number} className="border-t border-white/20 pt-5">
-                <div className="flex flex-col gap-2 sm:flex-row sm:items-start">
-                  <h2 className="text-h2">{heading}</h2>
-                  <p className="text-h3 text-violet spacegrotesk-bold">{number}</p>
-                </div>
+                {/* Número arriba y título debajo: así un título largo ("Planificación") no pisa la columna de al lado */}
+                <p className="spacegrotesk-bold text-h5 text-violet">{number}</p>
+                <h2 className="mt-3 min-w-0 break-words text-h3 leading-tight">{heading}</h2>
                 <p className="mt-4 max-w-xs text-ink text-h4">{description}</p>
               </article>
             ))}

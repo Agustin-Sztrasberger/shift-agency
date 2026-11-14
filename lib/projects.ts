@@ -18,7 +18,6 @@ export const projectDetails = {
       "Darle a Batter una identidad propia y un sitio que explique el producto con claridad y lleve a pedir una demo.",
     services: ["Branding", "Identidad visual", "Diseño Web", "UX/UI"],
     gallery: [
-      { src: "/images/proyectos/batter-producto.webp", alt: "Software de Batter en una notebook sobre una piedra verde", width: 2000, height: 1246 },
       { src: "/images/proyectos/batter-marca.webp", alt: "Sistema de marca de Batter: logo, isotipo, paleta de colores y tipografía", width: 1600, height: 5193 },
     ] as GalleryImage[],
     metrics: [
