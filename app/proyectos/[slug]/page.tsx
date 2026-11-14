@@ -36,7 +36,12 @@ export default async function ProjectPage({
             <ShiftArrow direction="left" className="h-3 w-3" /> Volver a trabajos
           </Link>
 
-          <div className="mt-16 grid items-end gap-12 md:mt-24 md:grid-cols-[1.1fr_0.9fr] md:gap-20">
+          {/* Portada primero; después título, texto y el resto del caso */}
+          <div data-page-media className="mt-10 overflow-hidden rounded-xl bg-surface-raised md:mt-14">
+            <img src={project.cover} alt={`${project.client}: ${project.title}`} className="h-auto w-full" />
+          </div>
+
+          <div className="mt-14 grid items-end gap-12 md:mt-20 md:grid-cols-[1.1fr_0.9fr] md:gap-20">
             <div>
               <p data-page-eyebrow className="mb-6 text-sm uppercase tracking-[0.24em] text-violet">
                 {project.label}
@@ -52,13 +57,6 @@ export default async function ProjectPage({
             </p>
           </div>
 
-          <div data-page-media className="mt-16 overflow-hidden rounded-lg bg-surface-raised md:mt-24">
-            <img
-              src={project.cover}
-              alt={`Vista previa de ${project.title}`}
-              className="aspect-[16/8] h-full w-full object-cover"
-            />
-          </div>
         </div>
       </section>
 
