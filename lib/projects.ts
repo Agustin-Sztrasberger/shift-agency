@@ -1,4 +1,9 @@
 // Datos de los casos de estudio. Se usan en el modal de Trabajos y en /proyectos/[slug].
+
+// Imágenes extra del caso (se muestran una debajo de la otra, a todo el ancho).
+// width/height son las medidas reales del archivo: evitan saltos mientras carga.
+export type GalleryImage = { src: string; alt: string; width: number; height: number };
+
 export const projectDetails = {
   batter: {
     label: "Caso de estudio 01",
@@ -12,6 +17,10 @@ export const projectDetails = {
     objective:
       "Darle a Batter una identidad propia y un sitio que explique el producto con claridad y lleve a pedir una demo.",
     services: ["Branding", "Identidad visual", "Diseño Web", "UX/UI"],
+    gallery: [
+      { src: "/images/proyectos/batter-sitio.webp", alt: "Sitio web de Batter en una notebook", width: 2000, height: 1600 },
+      { src: "/images/proyectos/batter-marca.webp", alt: "Sistema de marca de Batter: logo, isotipo, paleta de colores y tipografía", width: 1600, height: 5193 },
+    ] as GalleryImage[],
     metrics: [
       ["01", "Objetivo", "Una marca reconocible para un producto tecnológico pensado para la gastronomía."],
       ["02", "Planificación", "Un sitio que recorre funciones, planes y preguntas hasta la consulta."],
@@ -30,6 +39,7 @@ export const projectDetails = {
     objective:
       "Ordenar la presencia digital de la marca y convertir su identidad en una experiencia web memorable.",
     services: ["Dirección creativa", "Diseño Web", "Contenido digital"],
+    gallery: [] as GalleryImage[],
     metrics: [
       ["01", "Objetivo", "Una plataforma más clara, atractiva y fácil de recorrer."],
       ["02", "Planificación", "Una estructura que acompaña el recorrido natural de cada usuario."],
@@ -48,6 +58,7 @@ export const projectDetails = {
     objective:
       "Construir un sistema visual capaz de acompañar el crecimiento de la marca sin perder cercanía.",
     services: ["Estrategia", "Identidad visual", "Dirección creativa"],
+    gallery: [] as GalleryImage[],
     metrics: [
       ["01", "Objetivo", "Hacer visible el diferencial de la marca."],
       ["02", "Planificación", "Traducir la estrategia en un lenguaje visual propio."],
@@ -66,6 +77,7 @@ export const projectDetails = {
     objective:
       "Crear un universo de contenidos reconocible, flexible y alineado con los objetivos de comunicación.",
     services: ["Concepto", "Producción", "Social Media"],
+    gallery: [] as GalleryImage[],
     metrics: [
       ["01", "Objetivo", "Comunicar con claridad y personalidad."],
       ["02", "Planificación", "Un sistema de piezas pensado para cada canal."],

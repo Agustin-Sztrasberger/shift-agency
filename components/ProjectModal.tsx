@@ -141,6 +141,25 @@ export function ProjectModal({ project, onClose }: { project: Project | null; on
                   </div>
                 </motion.section>
 
+                {project.gallery.length > 0 && (
+                  <section className="px-6 pt-16 md:px-16 md:pt-24 lg:px-8">
+                    <div className="mx-auto flex max-w-6xl flex-col gap-6 md:gap-8">
+                      {project.gallery.map((image) => (
+                        <motion.img
+                          variants={rise}
+                          key={image.src}
+                          src={image.src}
+                          alt={image.alt}
+                          width={image.width}
+                          height={image.height}
+                          loading="lazy"
+                          className="h-auto w-full rounded-xl bg-surface-raised"
+                        />
+                      ))}
+                    </div>
+                  </section>
+                )}
+
                 <section className="px-6 py-16 md:px-16 md:py-24 lg:px-8">
                   <div className="mx-auto grid max-w-6xl gap-8 md:grid-cols-3">
                     {project.metrics.map(([number, heading, description]) => (

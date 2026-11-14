@@ -87,6 +87,24 @@ export default async function ProjectPage({
         </div>
       </section>
 
+      {project.gallery.length > 0 && (
+        <section data-page-section className="px-6 pt-20 md:px-16 md:pt-28 lg:px-8">
+          <div className="mx-auto flex max-w-6xl flex-col gap-6 md:gap-8">
+            {project.gallery.map((image) => (
+              <img
+                key={image.src}
+                src={image.src}
+                alt={image.alt}
+                width={image.width}
+                height={image.height}
+                loading="lazy"
+                className="h-auto w-full rounded-xl bg-surface-raised"
+              />
+            ))}
+          </div>
+        </section>
+      )}
+
       <section data-page-section className="px-6 py-20 md:px-16 md:py-32 lg:px-8">
         <div className="mx-auto max-w-6xl">
           <div className="grid gap-8 md:grid-cols-3">
