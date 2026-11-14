@@ -116,7 +116,7 @@ export function ProjectModal({ project, onClose }: { project: Project | null; on
                     </div>
 
                     <motion.div variants={rise} className="mt-14 overflow-hidden rounded-lg bg-surface-raised md:mt-20">
-                      <img src={project.cover} alt={`${project.client}: ${project.title}`} className="aspect-[16/8] h-full w-full object-cover" />
+                      <img src={project.cover} alt={`${project.client}: ${project.title}`} className="aspect-[16/10] h-full w-full object-cover" />
                     </motion.div>
                   </div>
                 </section>

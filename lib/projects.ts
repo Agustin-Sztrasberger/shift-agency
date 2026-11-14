@@ -10,15 +10,15 @@ export const projectDetails = {
     title: "Branding y sitio web",
     client: "Batter",
     category: "Software gastronómico",
-    thumbnail: "/images/proyectos/batter-card.webp",
-    cover: "/images/proyectos/batter-cover.webp",
+    thumbnail: "/images/proyectos/batter-sitio.webp",
+    cover: "/images/proyectos/batter-sitio.webp",
     intro:
       "Una marca y un sitio para un software que pone pedidos, reservas y clientes de bares, cafés y restaurantes en un solo lugar.",
     objective:
       "Darle a Batter una identidad propia y un sitio que explique el producto con claridad y lleve a pedir una demo.",
     services: ["Branding", "Identidad visual", "Diseño Web", "UX/UI"],
     gallery: [
-      { src: "/images/proyectos/batter-sitio.webp", alt: "Sitio web de Batter en una notebook", width: 2000, height: 1600 },
+      { src: "/images/proyectos/batter-producto.webp", alt: "Software de Batter en una notebook sobre una piedra verde", width: 2000, height: 1246 },
       { src: "/images/proyectos/batter-marca.webp", alt: "Sistema de marca de Batter: logo, isotipo, paleta de colores y tipografía", width: 1600, height: 5193 },
     ] as GalleryImage[],
     metrics: [

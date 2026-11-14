@@ -56,7 +56,7 @@ export default async function ProjectPage({
             <img
               src={project.cover}
               alt={`Vista previa de ${project.title}`}
-              className="aspect-[16/8] h-full w-full object-cover"
+              className="aspect-[16/10] h-full w-full object-cover"
             />
           </div>
         </div>
