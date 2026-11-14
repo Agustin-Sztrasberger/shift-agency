@@ -95,11 +95,6 @@ export function ProjectModal({ project, onClose }: { project: Project | null; on
               <motion.div variants={stagger} initial="hidden" animate="show">
                 <section className="px-6 pb-16 pt-20 md:px-16 md:pb-24 md:pt-24 lg:px-8">
                   <div className="mx-auto max-w-6xl">
-                    {/* Portada primero; después título, texto y el resto del caso */}
-                    <motion.div variants={rise} className="mb-14 overflow-hidden rounded-xl bg-surface-raised md:mb-20">
-                      <img src={project.cover} alt={`${project.client}: ${project.title}`} className="h-auto w-full" />
-                    </motion.div>
-
                     <div className="grid items-end gap-10 md:grid-cols-[1.1fr_0.9fr] md:gap-20">
                       <div>
                         <motion.p variants={rise} className="mb-6 text-sm uppercase tracking-[0.24em] text-violet">
@@ -120,6 +115,9 @@ export function ProjectModal({ project, onClose }: { project: Project | null; on
                       </motion.p>
                     </div>
 
+                    <motion.div variants={rise} className="mt-14 overflow-hidden rounded-lg bg-surface-raised md:mt-20">
+                      <img src={project.cover} alt={`${project.client}: ${project.title}`} className="aspect-[16/8] h-full w-full object-cover" />
+                    </motion.div>
                   </div>
                 </section>
 
